@@ -95,6 +95,19 @@ class LinodeTest(unittest.TestCase, TestCaseMixin):
                                        auth=NodeAuthPassword("foobar"))
         self.assertTrue(isinstance(node, Node))
 
+    def test_ex_ip_list(self):
+        # should return list of ip addresses
+        ip_list = self.driver.ex_ip_list()
+
+        self.assertTrue(isinstance(ip_list, list))
+        self.assertEqual(len(ip_list), 2)
+
+    def test_ex_ip_setrdns(self):
+        # will exception on failure
+        ret = self.driver.ex_ip_setrdns(ip="69.93.127.10",
+                                        hostname="li13-10.members.linode.com")
+        self.assertTrue(ret)
+
 
 class LinodeMockHttp(MockHttp):
     fixtures = ComputeFileFixtures('linode')
@@ -153,6 +166,10 @@ class LinodeMockHttp(MockHttp):
 
     def _linode_ip_list(self, method, url, body, headers):
         body = self.fixtures.load('_linode_ip_list.json')
+        return (httplib.OK, body, {}, httplib.responses[httplib.OK])
+
+    def _linode_ip_setrdns(self, method, url, body, headers):
+        body = self.fixtures.load('_linode_ip_setrdns.json')
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _batch(self, method, url, body, headers):

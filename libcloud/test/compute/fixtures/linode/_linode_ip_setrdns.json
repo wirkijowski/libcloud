@@ -1,0 +1,9 @@
+{
+    "ERRORARRAY": [ ],
+    "DATA": {
+        "HOSTNAME": "li13-10.members.linode.com",
+        "IPADDRESSID": 5384,
+        "IPADDRESS": "69.93.127.10"
+    },
+    "ACTION": "linode.ip.setrdns"
+}

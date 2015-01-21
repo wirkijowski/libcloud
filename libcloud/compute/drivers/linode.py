@@ -480,6 +480,49 @@ class LinodeNodeDriver(NodeDriver):
         self.datacenter = None
         raise LinodeException(0xFD, "Invalid datacenter (use one of %s)" % dcs)
 
+    def ex_ip_list(self):
+        """
+        Returns the IP addresses of all Linodes you have access to.
+        For data format refer to Linode API docs.
+
+        :rtype: ``list`` of ``dict``
+        """
+        params = {
+            "api_action": "linode.ip.list",
+        }
+
+        data = self.connection.request(API_ROOT, params=params).objects[0]
+        return data
+
+    def ex_ip_setrdns(self, ip, hostname):
+        """
+        Sets the rDNS name of a Public IP.
+
+        :keyword ip: The IPAddress of the address to update (required)
+        :type    ip: ``str``
+
+        :keyword hostname: The hostname to set the reverse DNS to (required)
+        :type    hostname: ``str``
+
+        :rtype: ``bool``
+        """
+
+        # find IPAddressID
+        ipAddressId = None
+        data = self.ex_ip_list()
+        for ipdata in data:
+            if ipdata['IPADDRESS'] == ip:
+                ipAddressId = ipdata["IPADDRESSID"]
+                break
+
+        params = {
+            "api_action": "linode.ip.setrdns",
+            "IPAddressID": ipAddressId,
+            "Hostname": hostname,
+        }
+        self.connection.request(API_ROOT, params=params).objects[0]
+        return True
+
     def _to_nodes(self, objs):
         """Convert returned JSON Linodes into Node instances
 
