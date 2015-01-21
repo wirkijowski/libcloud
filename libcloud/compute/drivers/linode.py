@@ -480,6 +480,42 @@ class LinodeNodeDriver(NodeDriver):
         self.datacenter = None
         raise LinodeException(0xFD, "Invalid datacenter (use one of %s)" % dcs)
 
+    def ex_ip_addprivate(self, node):
+        """
+        Assigns a Private IP to a Linode. Returns the IP addresss that was
+        added.
+
+        :keyword node: The Linode instance to add IP to.
+        :type    node: :class:`Node`
+
+        :rtype: ``string``
+        """
+        
+        params = {
+            "api_action": "linode.ip.addprivate",
+            "LinodeID": node.id,
+        }
+        data = self.connection.request(API_ROOT, params=params).objects[0]
+        return data["IPAddress"]
+
+    def ex_ip_addpublic(self, node):
+        """
+        Assigns a Public IP to a Linode. Returns the IP addresss that was
+        added.
+
+        :keyword node: The Linode instance to add IP to.
+        :type    node: :class:`Node`
+
+        :rtype: ``string``
+        """
+        
+        params = {
+            "api_action": "linode.ip.addpublic",
+            "LinodeID": node.id,
+        }
+        data = self.connection.request(API_ROOT, params=params).objects[0]
+        return data["IPAddress"]
+
     def ex_ip_list(self):
         """
         Returns the IP addresses of all Linodes you have access to.
@@ -522,7 +558,7 @@ class LinodeNodeDriver(NodeDriver):
         }
         self.connection.request(API_ROOT, params=params).objects[0]
         return True
-
+     
     def _to_nodes(self, objs):
         """Convert returned JSON Linodes into Node instances
 

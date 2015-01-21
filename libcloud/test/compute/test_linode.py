@@ -95,6 +95,18 @@ class LinodeTest(unittest.TestCase, TestCaseMixin):
                                        auth=NodeAuthPassword("foobar"))
         self.assertTrue(isinstance(node, Node))
 
+    def test_ex_ip_addprivate(self):
+        # should return IP address as string
+        node = self.driver.list_nodes()[0]
+        address = self.driver.ex_ip_addprivate(node=node)
+        self.assertEqual(address, "192.168.131.118")
+
+    def test_ex_ip_addpublic(self):
+        # should return IP address as string
+        node = self.driver.list_nodes()[0]
+        address = self.driver.ex_ip_addpublic(node=node)
+        self.assertEqual(address, "75.128.96.54")
+
     def test_ex_ip_list(self):
         # should return list of ip addresses
         ip_list = self.driver.ex_ip_list()
@@ -162,6 +174,16 @@ class LinodeMockHttp(MockHttp):
 
     def _linode_list(self, method, url, body, headers):
         body = self.fixtures.load('_linode_list.json')
+        return (httplib.OK, body, {}, httplib.responses[httplib.OK])
+    
+    def _linode_ip_addprivate(self, method, url, body, headers):
+        body='{"ERRORARRAY":[],"DATA":{"IPAddressID":8364,\
+              "IPAddress":"192.168.131.118"},"ACTION":"linode.ip.addprivate"}'
+        return (httplib.OK, body, {}, httplib.responses[httplib.OK])
+
+    def _linode_ip_addpublic(self, method, url, body, headers):
+        body='{"ERRORARRAY":[],"DATA":{"IPAddressID":5384,\
+              "IPAddress":"75.128.96.54"},"ACTION":"linode.ip.addpublic"}'
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _linode_ip_list(self, method, url, body, headers):
