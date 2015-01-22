@@ -1,0 +1,40 @@
+{
+    "ERRORARRAY":[],
+    "ACTION":"linode.config.list",
+    "DATA":[
+        {
+            "helper_disableUpdateDB":1,
+            "RootDeviceRO":true,
+            "RootDeviceCustom":"",
+            "Label":"My configuration profile",
+            "DiskList":"55319,55590,,55591,55592,,,,",
+            "LinodeID":8098,
+            "Comments":"",
+            "ConfigID":31058,
+            "helper_xen":1,
+            "RunLevel":"default",
+            "helper_depmod":1,
+            "KernelID":85,
+            "RootDeviceNum":1,
+            "helper_libtls":false,
+            "RAMLimit":0
+        },
+        {
+            "helper_disableUpdateDB":1,
+            "RootDeviceRO":true,
+            "RootDeviceCustom":"",
+            "Label":"test profile",
+            "DiskList":",,,,,,,,",
+            "LinodeID":8098,
+            "Comments":"",
+            "ConfigID":31231,
+            "helper_xen":1,
+            "RunLevel":"default",
+            "helper_depmod":1,
+            "KernelID":85,
+            "RootDeviceNum":1,
+            "helper_libtls":false,
+            "RAMLimit":0
+        }
+    ]
+}

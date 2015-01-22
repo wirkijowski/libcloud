@@ -480,6 +480,33 @@ class LinodeNodeDriver(NodeDriver):
         self.datacenter = None
         raise LinodeException(0xFD, "Invalid datacenter (use one of %s)" % dcs)
 
+    def ex_config_list(self, node, configId=None):
+        """
+        Lists a Linode's Configuration Profiles. Returns list of dictionaries,
+        each for specific onfiguration profile. Refer to Linode API Docs for
+        details.
+
+        :keyword node: The Linode instance to list configs for (required).
+        :type    node: :class:`Node`
+
+        :keyword configId: Configuration profile ID (optional).
+        :type    configId: ``int``
+
+        :rtype: ``list`` of ``dict``
+        """
+        params = {
+            "api_action": "linode.config.list",
+            "LinodeID": node.id,
+        }
+        if configId is not None:
+            if not isinstance(configId, int):
+                raise LinodeException(0xFB, "Config has to be int")
+            else:
+                params["ConfigID"] = configId
+
+        data = self.connection.request(API_ROOT, params=params).objects[0]
+        return data
+
     def ex_ip_addprivate(self, node):
         """
         Assigns a Private IP to a Linode. Returns the IP addresss that was
@@ -490,7 +517,7 @@ class LinodeNodeDriver(NodeDriver):
 
         :rtype: ``string``
         """
-        
+
         params = {
             "api_action": "linode.ip.addprivate",
             "LinodeID": node.id,
@@ -508,7 +535,7 @@ class LinodeNodeDriver(NodeDriver):
 
         :rtype: ``string``
         """
-        
+
         params = {
             "api_action": "linode.ip.addpublic",
             "LinodeID": node.id,
@@ -558,7 +585,7 @@ class LinodeNodeDriver(NodeDriver):
         }
         self.connection.request(API_ROOT, params=params).objects[0]
         return True
-     
+
     def _to_nodes(self, objs):
         """Convert returned JSON Linodes into Node instances
 

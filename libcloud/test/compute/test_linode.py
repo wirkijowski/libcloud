@@ -21,6 +21,7 @@ import sys
 import unittest
 from libcloud.utils.py3 import httplib
 
+from libcloud.common.linode import LinodeException
 from libcloud.compute.drivers.linode import LinodeNodeDriver
 from libcloud.compute.base import Node, NodeAuthPassword, NodeAuthSSHKey
 
@@ -94,6 +95,22 @@ class LinodeTest(unittest.TestCase, TestCaseMixin):
                                        image=self.driver.list_images()[0],
                                        auth=NodeAuthPassword("foobar"))
         self.assertTrue(isinstance(node, Node))
+
+    def test_ex_config_list(self):
+        # should return list of dictionares
+        node = self.driver.list_nodes()[0]
+        data = self.driver.ex_config_list(node=node)
+        self.assertTrue(isinstance(data, list))
+        self.assertTrue(isinstance(data[0], dict))
+        self.assertEqual(len(data), 2)
+
+        # check configId
+        data = self.driver.ex_config_list(node=node, configId=31058)
+        self.assertTrue(isinstance(data, list))
+        self.assertTrue(isinstance(data[0], dict))
+
+        with self.assertRaises(LinodeException):
+            self.driver.ex_config_list(node=node, configId="string")
 
     def test_ex_ip_addprivate(self):
         # should return IP address as string
@@ -172,18 +189,22 @@ class LinodeMockHttp(MockHttp):
         body = '{"ERRORARRAY":[],"ACTION":"linode.config.create","DATA":{"ConfigID":31239}}'
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
+    def _linode_config_list(self, method, url, body, headers):
+        body = self.fixtures.load('_linode_config_list.json')
+        return (httplib.OK, body, {}, httplib.responses[httplib.OK])
+
     def _linode_list(self, method, url, body, headers):
         body = self.fixtures.load('_linode_list.json')
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
-    
+
     def _linode_ip_addprivate(self, method, url, body, headers):
-        body='{"ERRORARRAY":[],"DATA":{"IPAddressID":8364,\
-              "IPAddress":"192.168.131.118"},"ACTION":"linode.ip.addprivate"}'
+        body = '{"ERRORARRAY":[],"DATA":{"IPAddressID":8364,\
+                "IPAddress":"192.168.131.118"},"ACTION":"linode.ip.addprivate"}'
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _linode_ip_addpublic(self, method, url, body, headers):
-        body='{"ERRORARRAY":[],"DATA":{"IPAddressID":5384,\
-              "IPAddress":"75.128.96.54"},"ACTION":"linode.ip.addpublic"}'
+        body = '{"ERRORARRAY":[],"DATA":{"IPAddressID":5384,\
+                "IPAddress":"75.128.96.54"},"ACTION":"linode.ip.addpublic"}'
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _linode_ip_list(self, method, url, body, headers):
